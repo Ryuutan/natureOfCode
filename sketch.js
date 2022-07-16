@@ -1,17 +1,16 @@
-let rocks = [];
-let magnets = [];
+let planets = [];
 
 const mu = 0.1;
-const G = 0.6;
+const G = 1;
 
 let cooldown;
 
 function setup() {
-    createCanvas(windowWidth, windowHeight);
+    createCanvas(600, 600);
 	background(255);
-
-	for (let i = 0; i < 10; i++) {
-	    rocks.push(new Mover(random(width), random(height), random(120, 180)));
+	
+	for (let i = 0; i < 5; i++) {
+	    planets.push(new Mover(random(120, 360)));
 	}
 
     wind = createVector(0.1, 0);
@@ -19,10 +18,19 @@ function setup() {
 }
 
 function draw() {
-    background(50, 50, 50, 10);
+    background(50, 50, 50);
+	
+	for (rock of planets) {
+		for (other of planets) {
+			if(rock != other) {
+				rock.collision(other);
+				rock.attract(other);
+			}
+		}
+	}
 
 
-	for (const rock of rocks) {
+	for (const rock of planets) {
 		rock.edges();
 		rock.visualize(rock.a);
 		rock.update();

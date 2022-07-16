@@ -1,9 +1,12 @@
 class Mover {
-    constructor(x, y, m) {
-        this.pos = createVector(x, y);
-        this.v = p5.Vector.random2D();
+    constructor(m) {
+        this.pos = p5.Vector.random2D();
+        this.pos.setMag(random(100, 200));
+        this.v = this.pos.copy();
+        this.v.setMag(3);
+        this.v.rotate(PI / 2);
+        this.pos.add(width / 2, height / 2);
         this.a = createVector();
-        this.v.mult(random(2));
         this.mass = m;
         this.r = sqrt(this.mass);
     }
@@ -34,32 +37,35 @@ class Mover {
         if (p5.Vector.sub(this.pos, other.pos).mag() < this.r + other.r) {
             let ow = p5.Vector.sub(this.v, other.v).mult(-1);
             let wo = p5.Vector.sub(this.v, other.v);
+            this.pos.add(ow);
+            other.pos.add(wo);
             this.v.add(ow);
             other.v.add(wo);
+            this.a.mult(0);
         }
     }
 
-    attract(atd) {
-        let force = p5.Vector.sub(this.pos, atd.pos);
+    attract(other) {
+        let force = p5.Vector.sub(this.pos, other.pos);
         let distanceSq = force.magSq();
-        let strength = ((this.mass * atd.mass) / distanceSq) * G
+        let strength = ((this.mass * other.mass) / distanceSq) * G
         force.setMag(strength);
-        atd.applyForce(force);
+        other.applyForce(force);
     }
 
     edges() {
         if (this.pos.x >= width - this.r) {
             this.pos.x = width - this.r;
-            this.v.x *= -1;
+            this.v.x *= -0.6;
         } if (this.pos.x <= this.r) {
             this.pos.x = this.r;
-            this.v.x *= -1;
+            this.v.x *= -0.6;
         } if (this.pos.y >= height - this.r) {
             this.pos.y = height - this.r;
-            this.v.y *= -1;
+            this.v.y *= -0.6;
         } if (this.pos.y <= this.r) {
             this.pos.y = this.r;
-            this.v.y *= -1;
+            this.v.y *= -0.6;
         }
     }
   
@@ -79,7 +85,7 @@ class Mover {
         stroke(255);
         strokeWeight(2);
         let yell = force.copy();
-        yell.mult(10000);
+        yell.mult(1000);
         line(this.pos.x, this.pos.y, this.pos.x + yell.x, this.pos.y + yell.y);
     }
   }
