@@ -32,11 +32,19 @@ class Mover {
     
     collision(other) {
         if (p5.Vector.sub(this.pos, other.pos).mag() < this.r + other.r) {
-            this.v.mult(0);
-            return true;
-        } else {
-            return false;
+            let ow = p5.Vector.sub(this.v, other.v).mult(-1);
+            let wo = p5.Vector.sub(this.v, other.v);
+            this.v.add(ow);
+            other.v.add(wo);
         }
+    }
+
+    attract(atd) {
+        let force = p5.Vector.sub(this.pos, atd.pos);
+        let distanceSq = force.magSq();
+        let strength = ((this.mass * atd.mass) / distanceSq) * G
+        force.setMag(strength);
+        atd.applyForce(force);
     }
 
     edges() {
